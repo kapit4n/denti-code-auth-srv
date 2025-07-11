@@ -54,4 +54,27 @@ export class AuthService {
   async validateUserById(userId: string) {
     return this.usersService.findOneById(userId);
   }
+
+  async introspect(token: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
+
+      const user = await this.usersService.findOneById(payload.sub);
+
+      if (!user || !user.isActive) {
+        return { active: false };
+      }
+
+      return {
+        active: true,
+        userId: user.id,
+        email: user.email,
+        roles: user.roles.map(userRole => userRole.role.name),
+      }
+    } catch (error) {
+      return { active: false };
+    }
+  }
 }

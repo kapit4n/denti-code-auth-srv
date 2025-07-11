@@ -25,4 +25,10 @@ export class AuthController {
   getProfile(@Request() req) {
     return req.user;
   }
+
+  @Post('introspect')
+  @HttpCode(HttpStatus.OK)
+  async introspect(@Body('token') token: string) {
+    return this.authService.introspect(token);
+  }
 }
