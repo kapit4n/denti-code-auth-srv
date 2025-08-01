@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Prisma } from '@prisma/client';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,18 @@ export class AuthService {
         lastName: registerUserDto.lastName,
         passwordHash: hashedPassword, 
       });
+
+      const eventPayload = {
+        routing_key: 'user.registered',
+        body: {
+          userId: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+      };
+
+      await axios.post('http://localhost:5000/api/publish', eventPayload);
 
       const { passwordHash, ...result } = user;
       return result;

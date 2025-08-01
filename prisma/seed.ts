@@ -2,6 +2,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import axios from 'axios';
 
 const prisma = new PrismaClient();
 
@@ -112,6 +113,20 @@ async function main() {
   const patient3 = await prisma.user.upsert({ where: { email: 'patient3@example.com' }, update: {}, create: { email: 'patient3@example.com', firstName: 'Alice', lastName: 'Johnson', passwordHash: password } });
   const patient4 = await prisma.user.upsert({ where: { email: 'patient4@example.com' }, update: {}, create: { email: 'patient4@example.com', firstName: 'Bob', lastName: 'Williams', passwordHash: password } });
   const patient5 = await prisma.user.upsert({ where: { email: 'patient5@example.com' }, update: {}, create: { email: 'patient5@example.com', firstName: 'Charlie', lastName: 'Brown', passwordHash: password } });
+
+
+  // make axios call here to sync the patients data
+  const eventPayload = {
+    routing_key: 'user.registered',
+    body: {
+      userId: patient1.id,
+      email: patient1.email,
+      firstName: patient1.firstName,
+      lastName: patient1.lastName,
+    },
+  };
+
+  await axios.post('http://localhost:5000/api/publish', eventPayload);
 
   console.log('Created Users...');
 
