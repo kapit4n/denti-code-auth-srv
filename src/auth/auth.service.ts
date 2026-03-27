@@ -6,6 +6,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
+import { config } from '../config';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,10 @@ export class AuthService {
         },
       };
 
-      await axios.post('http://localhost:5000/api/publish', eventPayload);
+
+      if (config.services.brokerPublishUrl) {
+        await axios.post(config.services.brokerPublishUrl, eventPayload);
+      }
 
       const { passwordHash, ...result } = user;
       return result;
