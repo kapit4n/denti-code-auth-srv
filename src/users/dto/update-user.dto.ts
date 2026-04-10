@@ -1,4 +1,5 @@
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsString, Length, ValidateIf } from 'class-validator';
+import { SUPPORTED_LOCALE_CODES } from '../../locale/supported-locales';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -14,4 +15,11 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @ValidateIf(
+    (o: UpdateUserDto) => o.preferredLocale !== undefined && o.preferredLocale !== null,
+  )
+  @IsString()
+  @IsIn([...SUPPORTED_LOCALE_CODES])
+  preferredLocale?: string | null;
 }

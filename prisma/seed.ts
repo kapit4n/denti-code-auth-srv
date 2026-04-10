@@ -9,6 +9,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Start seeding...');
 
+  await prisma.appSettings.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: { id: 'singleton', defaultLocale: 'en' },
+  });
+
   const permCreateUser = await prisma.permission.upsert({
     where: { name: 'users:create' },
     update: {},

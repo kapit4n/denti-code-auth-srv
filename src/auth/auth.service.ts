@@ -72,6 +72,13 @@ export class AuthService {
     return this.usersService.findOneById(userId);
   }
 
+  issueAccessToken(userId: string, email: string) {
+    const payload = { sub: userId, email };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
   async introspect(token: string) {
     try {
       const payload = await this.jwtService.verifyAsync(token, {

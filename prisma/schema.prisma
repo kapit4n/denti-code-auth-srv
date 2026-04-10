@@ -8,16 +8,25 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  passwordHash  String
-  firstName     String?
-  lastName      String?
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  roles         UserRole[]
-  refreshTokens RefreshToken[]
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  firstName         String?
+  lastName          String?
+  /** When null, the UI uses the organization default from AppSettings. */
+  preferredLocale   String?
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  roles             UserRole[]
+  refreshTokens     RefreshToken[]
+}
+
+/** Single-row app configuration (singleton id). */
+model AppSettings {
+  id              String   @id @default("singleton")
+  defaultLocale   String   @default("en")
+  updatedAt       DateTime @updatedAt
 }
 
 model Role {
